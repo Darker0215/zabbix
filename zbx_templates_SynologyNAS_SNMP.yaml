@@ -1,0 +1,341 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-09-23T11:04:41Z'
+  groups:
+    - uuid: ee75f695f98c4f97b1b786e37ba5cbbe
+      name: 'Synology NAS'
+  templates:
+    - uuid: 9f921b59ad2e453980d2ee22784a7d6a
+      template: 'SynologyNAS by SNMP'
+      name: 'SynologyNAS by SNMP'
+      groups:
+        - name: 'Synology NAS'
+      items:
+        - uuid: 85732236086a4802b1396ada215d42eb
+          name: CPU风扇状态
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.4.2.0
+          key: syno.system.cpuFanStatus
+          delay: 5m
+          history: 30d
+          trends: 90d
+          description: |
+            CPU风扇状态
+            1 正常
+            2 错误
+          valuemap:
+            name: 'Synology System Status'
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: fb4260a4c6a547dd92540e8b1b610365
+              expression: 'last(/SynologyNAS by SNMP/syno.system.cpuFanStatus)<>1'
+              name: 'CPU Fan Status'
+              priority: WARNING
+        - uuid: 5cdf5e446e7743da9775e57952933e68
+          name: 产品型号
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.5.1.0
+          key: syno.system.modelName
+          delay: 1d
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          description: 产品型号
+          inventory_link: TYPE
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 0795584a01d24458bbb1afd04df1ea70
+          name: 电源状态
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.3.0
+          key: syno.system.powerStatus
+          delay: 5m
+          history: 30d
+          trends: 90d
+          description: |
+            电源状态
+            1 正常
+            2 错误
+          valuemap:
+            name: 'Synology System Status'
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: 050c376f64a34f98aeb09eb6be297e2e
+              expression: 'last(/SynologyNAS by SNMP/syno.system.powerStatus)=2'
+              name: 'System Power Supply Failure'
+              priority: AVERAGE
+        - uuid: 5a83d0a81a1f460f991b2e5b07a5dafa
+          name: 产品序列号
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.5.2.0
+          key: syno.system.serialNumber
+          delay: 1d
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          description: 产品序列号
+          inventory_link: SERIALNO_A
+          tags:
+            - tag: Application
+              value: System
+        - uuid: 0ebe6a9dc59641f5a8ca142e87126d5f
+          name: 系统状态
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.1.0
+          key: syno.system.status
+          delay: 5m
+          history: 30d
+          trends: 90d
+          description: |
+            系统状态
+            1 正常
+            2 异常
+          valuemap:
+            name: 'Synology System Status'
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: 9283cbbf08764922a90763155da2cb09
+              expression: 'last(/SynologyNAS by SNMP/syno.system.status)<>1'
+              name: 'System partition status not Normal'
+              priority: AVERAGE
+        - uuid: 66b84af5572f4dc38801a09bef212ab1
+          name: 系统风扇状态
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.4.1.0
+          key: syno.system.systemFanStatus
+          delay: 5m
+          history: 30d
+          trends: 90d
+          description: |
+            系统风扇状态
+            1 正常
+            2 异常
+          valuemap:
+            name: 'Synology System Status'
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: 82b0964e56414f078397f12046dd4393
+              expression: 'last(/SynologyNAS by SNMP/syno.system.systemFanStatus)<>1'
+              name: 'System Fan Status'
+              priority: WARNING
+        - uuid: 24b8c2f5a7f5463090f1f9fc95deb1dc
+          name: 系统温度
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.2.0
+          key: syno.system.temperature
+          delay: '120'
+          history: 30d
+          trends: 90d
+          units: C
+          description: NAS系统温度
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: c6669c09a3e74ded8b143b24b47e61d7
+              expression: 'last(/SynologyNAS by SNMP/syno.system.temperature)>70'
+              name: 系统温度告警
+              priority: AVERAGE
+              description: 系统温度超过70°C告警
+        - uuid: 71ce23c09991456095cd875b787a41e7
+          name: 'DMS 版本更新检查'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.5.4.0
+          key: syno.system.upgradeAvailable
+          delay: 12h
+          history: 7d
+          trends: '0'
+          description: 检查DMS是否有可更新版本
+          valuemap:
+            name: 'Synology System Software Upgrade Available'
+          tags:
+            - tag: Application
+              value: System
+          triggers:
+            - uuid: e3f0ee7699254ef5b00426890dc1522d
+              expression: '(last(/SynologyNAS by SNMP/syno.system.upgradeAvailable,#1)<>last(/SynologyNAS by SNMP/syno.system.upgradeAvailable,#2))=0'
+              name: 'Change in update available status'
+              priority: INFO
+        - uuid: de58d60bc15a44bcb4f15c61124031c8
+          name: 'DSM 版本'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.6574.1.5.3.0
+          key: syno.system.version
+          delay: 1d
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          description: 'DSM 版本'
+          tags:
+            - tag: Application
+              value: System
+      discovery_rules:
+        - uuid: ef2874d885cf4afd81999268cf89ef8e
+          name: 'Physical Disk Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#DISK_NAME},.1.3.6.1.4.1.6574.2.1.1.2]'
+          key: syno.physicaldisk.discovery
+          delay: 10m
+          description: 自动发现磁盘
+          item_prototypes:
+            - uuid: e76ceffced49449685568d78fe622250
+              name: '{#DISK_NAME} 型号'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.6574.2.1.1.3.{#SNMPINDEX}'
+              key: 'syno.physicaldisk.diskModel[{#DISK_NAME}]'
+              delay: 24h
+              history: 7d
+              trends: '0'
+              value_type: CHAR
+              description: 磁盘型号
+              tags:
+                - tag: Application
+                  value: DiskModel
+            - uuid: 1a9916db05f7412b999c867a3119a12d
+              name: '{#DISK_NAME} 状态'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.6574.2.1.1.5.{#SNMPINDEX}'
+              key: 'syno.physicaldisk.diskStatus[{#DISK_NAME}]'
+              delay: 5m
+              history: 7d
+              trends: '0'
+              description: 磁盘状态
+              valuemap:
+                name: 'Synology Disk Status'
+              tags:
+                - tag: Application
+                  value: DiskStatus
+              trigger_prototypes:
+                - uuid: b509d4c00e24463ab61e141672e1f009
+                  expression: 'last(/SynologyNAS by SNMP/syno.physicaldisk.diskStatus[{#DISK_NAME}])<>1'
+                  name: '{#DISK_NAME}磁盘状态告警'
+                  priority: HIGH
+                  description: 'Please check physical disk for warnings or errors'
+            - uuid: e1e8f4ab8e3c4db8974f2621666537d1
+              name: '{#DISK_NAME} 温度'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.6574.2.1.1.6.{#SNMPINDEX}'
+              key: 'syno.physicaldisk.diskTemperature[{#DISK_NAME}]'
+              delay: 5m
+              history: 7d
+              trends: 30d
+              value_type: FLOAT
+              units: C
+              description: 磁盘温度
+              tags:
+                - tag: Application
+                  value: DiskTemperature
+        - uuid: 8c37fc0c5f5645478acdbda068ed6ae0
+          name: 'RAID Array Discovery'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#RAID_NAME},.1.3.6.1.4.1.6574.3.1.1.2]'
+          key: syno.raidarray
+          delay: 10m
+          item_prototypes:
+            - uuid: 380675ace23440b8890c8c41654c1e57
+              name: '磁盘阵列 {#RAID_NAME}'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.6574.3.1.1.2.{#SNMPINDEX}'
+              key: 'syno.raidarray.raidName[{#RAID_NAME}]'
+              delay: 10m
+              trends: '0'
+              value_type: TEXT
+              tags:
+                - tag: Application
+                  value: RAID
+            - uuid: 2b133d09fcbc4ae59e96a197804934ba
+              name: '磁盘阵列 {#RAID_NAME} 状态'
+              type: SNMP_AGENT
+              snmp_oid: '.1.3.6.1.4.1.6574.3.1.1.3.{#SNMPINDEX}'
+              key: 'syno.raidarray.raidStatus[{#RAID_NAME}]'
+              delay: 10m
+              history: 30d
+              trends: 90d
+              valuemap:
+                name: 'Synology RAID Status'
+              tags:
+                - tag: Application
+                  value: RAID
+              trigger_prototypes:
+                - uuid: a13c4f5806a6459785fb1929aceafbd8
+                  expression: 'last(/SynologyNAS by SNMP/syno.raidarray.raidStatus[{#RAID_NAME}])<>1'
+                  name: 磁盘阵列告警
+                  priority: HIGH
+                  description: 'Please check raid status'
+      macros:
+        - macro: '{$SNMPV3_PORT}'
+          value: '161'
+        - macro: '{$SNMPV3_PRIVATEPASS}'
+          type: SECRET_TEXT
+        - macro: '{$SNMPV3_SECURITYNAME}'
+          value: qcnas
+      valuemaps:
+        - uuid: 898019ebbf8c4b8e92f27a1e7e317819
+          name: 'Synology Disk Status'
+          mappings:
+            - value: '1'
+              newvalue: Normal
+            - value: '2'
+              newvalue: Initialized
+            - value: '3'
+              newvalue: NotInitialized
+            - value: '4'
+              newvalue: SystemPartitionFailed
+            - value: '5'
+              newvalue: Crashed
+        - uuid: 4bf615e160754a97b1ba972a7ba5597d
+          name: 'Synology RAID Status'
+          mappings:
+            - value: '1'
+              newvalue: Normal
+            - value: '2'
+              newvalue: Repairing
+            - value: '3'
+              newvalue: Migrating
+            - value: '4'
+              newvalue: Expanding
+            - value: '5'
+              newvalue: Deleting
+            - value: '6'
+              newvalue: Creating
+            - value: '7'
+              newvalue: RaidSyncing
+            - value: '8'
+              newvalue: RaidParityChecking
+            - value: '9'
+              newvalue: RaidAssembling
+            - value: '10'
+              newvalue: Canceling
+            - value: '11'
+              newvalue: Degrade
+            - value: '12'
+              newvalue: Crashed
+        - uuid: 05e09ab2c4dd42c1abf0369407aae71c
+          name: 'Synology System Software Upgrade Available'
+          mappings:
+            - value: '1'
+              newvalue: Available
+            - value: '2'
+              newvalue: Unavailable
+            - value: '3'
+              newvalue: Connecting
+            - value: '4'
+              newvalue: Disconnected
+            - value: '5'
+              newvalue: Others
+        - uuid: 25b6693c3ca440b4ad1a42f1a69178fd
+          name: 'Synology System Status'
+          mappings:
+            - value: '1'
+              newvalue: Normal
+            - value: '2'
+              newvalue: Failed
